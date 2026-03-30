@@ -111,7 +111,8 @@ Use `4242 4242 4242 4242`, any future expiry, any CVC.
 
 ## Deployment
 
-See **DEPLOYMENT.md** for Vercel + Render + Supabase env vars and checklists.
+- **DEPLOYMENT.md** — Supabase + API (e.g. Render) + general checklist.
+- **CLOUDFLARE.md** — deploy the **Next.js frontend** to **Cloudflare Workers** (OpenNext). The API stays on a Node host.
 
 ## License
 

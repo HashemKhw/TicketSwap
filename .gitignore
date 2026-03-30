@@ -1,3 +1,6 @@
+# Local Claude Code symlink copy of skills (keep .agents/ in repo)
+.claude/
+
 node_modules/
 .env
 .env.local
