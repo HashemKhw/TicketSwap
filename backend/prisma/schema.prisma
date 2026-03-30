@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+
+  listings TicketListing[]
+  orders   Order[]   @relation("BuyerOrders")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model Event {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  location    String
+  date        DateTime
+  createdAt   DateTime @default(now())
+
+  listings TicketListing[]
+}
+
+model TicketListing {
+  id        String   @id @default(uuid())
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  sellerId  String
+  seller    User     @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  price     Decimal  @db.Decimal(10, 2)
+  quantity  Int
+  seatInfo  String
+  createdAt DateTime @default(now())
+
+  orders Order[]
+}
+
+model Order {
+  id              String        @id @default(uuid())
+  buyerId         String
+  buyer           User          @relation("BuyerOrders", fields: [buyerId], references: [id])
+  ticketListingId String
+  listing         TicketListing @relation(fields: [ticketListingId], references: [id])
+  totalPrice      Decimal       @db.Decimal(10, 2)
+  quantity        Int           @default(1)
+  status          OrderStatus   @default(PENDING)
+  stripeSessionId String?
+  createdAt       DateTime      @default(now())
+
+  @@index([buyerId])
+  @@index([stripeSessionId])
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+}
