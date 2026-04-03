@@ -3,6 +3,17 @@ const BASE =
     ? (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000").replace(/\/$/, "")
     : "";
 
+export function isApiUnavailableError(error: unknown): boolean {
+  if (!(error instanceof Error)) return false;
+  const message = error.message.toLowerCase();
+  return (
+    message.includes("failed to fetch") ||
+    message.includes("networkerror") ||
+    message.includes("load failed") ||
+    message.includes("internal server error")
+  );
+}
+
 export function getStoredToken(): string | null {
   if (typeof window === "undefined") return null;
   return localStorage.getItem("token");
@@ -73,7 +84,15 @@ export async function meRequest() {
 }
 
 export async function fetchEvents() {
-  return api<{ events: import("./types").Event[] }>("/events", { auth: false });
+  try {
+    return await api<{ events: import("./types").Event[] }>("/events", { auth: false });
+  } catch (error) {
+    if (isApiUnavailableError(error)) {
+      return { events: [] };
+    }
+
+    throw error;
+  }
 }
 
 export async function fetchEvent(id: string) {
