@@ -3,7 +3,7 @@ const BASE =
     ? (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000").replace(/\/$/, "")
     : "";
 
-export function isApiUnavailableError(error: unknown): boolean {
+function isApiUnavailableError(error: unknown): boolean {
   if (!(error instanceof Error)) return false;
   const message = error.message.toLowerCase();
   return (
