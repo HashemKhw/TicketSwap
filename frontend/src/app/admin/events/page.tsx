@@ -38,44 +38,44 @@ export default function AdminEventsPage() {
   if (loading || !user || user.role !== "ADMIN") return <p className="text-slate-600">Loading…</p>;
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
+    <div className="page-shell space-y-8">
+      <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <Link href="/admin" className="text-sm text-indigo-600 hover:underline">
+          <Link href="/admin" className="text-sm font-semibold text-[var(--primary)] hover:underline">
             ← Admin
           </Link>
-          <h1 className="mt-2 text-2xl font-bold text-slate-900">Events</h1>
+          <h1 className="mt-5 text-4xl font-bold tracking-[-0.04em] text-[var(--foreground)]">Events</h1>
         </div>
         <Link
           href="/admin/events/new"
-          className="rounded-lg bg-amber-600 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-700"
+          className="cta-primary px-5 py-3 text-sm"
         >
           New event
         </Link>
       </div>
-      {err && <p className="text-sm text-red-600">{err}</p>}
-      <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
+      {err && <p className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">{err}</p>}
+      <div className="surface-card overflow-x-auto">
         <table className="min-w-full text-left text-sm">
-          <thead className="border-b border-slate-200 bg-slate-50">
+          <thead className="border-b border-slate-200 bg-[var(--surface-low)]">
             <tr>
-              <th className="px-4 py-3 font-semibold text-slate-700">Title</th>
-              <th className="px-4 py-3 font-semibold text-slate-700">Location</th>
-              <th className="px-4 py-3 font-semibold text-slate-700">Date</th>
-              <th className="px-4 py-3 font-semibold text-slate-700">Actions</th>
+              <th className="px-5 py-4 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Title</th>
+              <th className="px-5 py-4 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Location</th>
+              <th className="px-5 py-4 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Date</th>
+              <th className="px-5 py-4 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Actions</th>
             </tr>
           </thead>
           <tbody>
             {events.map((e) => (
               <tr key={e.id} className="border-b border-slate-100">
-                <td className="px-4 py-3 font-medium text-slate-900">{e.title}</td>
-                <td className="px-4 py-3 text-slate-600">{e.location}</td>
-                <td className="px-4 py-3 text-slate-600">
+                <td className="px-5 py-4 font-semibold text-[var(--foreground)]">{e.title}</td>
+                <td className="px-5 py-4 text-[var(--muted)]">{e.location}</td>
+                <td className="px-5 py-4 text-[var(--muted)]">
                   {new Date(e.date).toLocaleString()}
                 </td>
-                <td className="px-4 py-3">
+                <td className="px-5 py-4">
                   <Link
                     href={`/admin/events/${e.id}/edit`}
-                    className="mr-3 text-indigo-600 hover:underline"
+                    className="mr-3 text-[var(--primary)] hover:underline"
                   >
                     Edit
                   </Link>

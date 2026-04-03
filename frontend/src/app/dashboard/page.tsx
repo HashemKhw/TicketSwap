@@ -18,41 +18,84 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
-        <p className="text-slate-600">Signed in as {user.email}</p>
-      </div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="page-shell space-y-10">
+      <section className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+        <div>
+          <span className="eyebrow">Seller dashboard</span>
+          <h1 className="page-heading mt-5 max-w-3xl">
+            Welcome back.
+            <br />
+            <span className="text-[var(--primary)]">Your ticket portfolio</span> is ready.
+          </h1>
+          <p className="mt-5 max-w-xl text-base leading-8 text-[var(--muted)]">
+            Signed in as {user.email}. Review your active listings, recent orders, and completed
+            sales from one premium dashboard.
+          </p>
+        </div>
+        <div className="surface-card editorial-gradient p-8 text-white">
+          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/70">
+            Quick action
+          </p>
+          <h2 className="mt-3 text-3xl font-bold tracking-[-0.04em]">Sell your next ticket.</h2>
+          <p className="mt-4 max-w-sm text-sm leading-7 text-white/80">
+            Reach buyers instantly by creating a polished listing tied to an admin-approved event.
+          </p>
+          <Link href="/sell/new" className="mt-8 inline-flex rounded-2xl bg-white px-5 py-3 text-sm font-bold text-[var(--primary)]">
+            Create listing
+          </Link>
+        </div>
+      </section>
+
+      <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
         <Link
           href="/dashboard/listings"
-          className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-indigo-200 hover:shadow"
+          className="surface-card p-6 transition hover:-translate-y-1"
         >
-          <h2 className="font-semibold text-slate-900">My listings</h2>
-          <p className="mt-1 text-sm text-slate-600">Create, edit, or remove tickets you sell.</p>
+          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--primary)]">
+            Inventory
+          </p>
+          <h2 className="mt-4 text-2xl font-bold tracking-[-0.03em] text-[var(--foreground)]">
+            My listings
+          </h2>
+          <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
+            Create, edit, or remove tickets you sell.
+          </p>
         </Link>
         <Link
           href="/dashboard/orders"
-          className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-indigo-200 hover:shadow"
+          className="surface-card p-6 transition hover:-translate-y-1"
         >
-          <h2 className="font-semibold text-slate-900">My orders</h2>
-          <p className="mt-1 text-sm text-slate-600">Purchases and payment status.</p>
+          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--secondary)]">
+            Buying
+          </p>
+          <h2 className="mt-4 text-2xl font-bold tracking-[-0.03em] text-[var(--foreground)]">
+            My orders
+          </h2>
+          <p className="mt-3 text-sm leading-6 text-[var(--muted)]">Purchases and payment status.</p>
         </Link>
         <Link
           href="/dashboard/sales"
-          className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-indigo-200 hover:shadow"
+          className="surface-card p-6 transition hover:-translate-y-1"
         >
-          <h2 className="font-semibold text-slate-900">My sales</h2>
-          <p className="mt-1 text-sm text-slate-600">Buyers who completed checkout for your listings.</p>
+          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--tertiary)]">
+            Revenue
+          </p>
+          <h2 className="mt-4 text-2xl font-bold tracking-[-0.03em] text-[var(--foreground)]">
+            My sales
+          </h2>
+          <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
+            Buyers who completed checkout for your listings.
+          </p>
         </Link>
         <Link
           href="/sell/new"
-          className="rounded-xl border border-indigo-200 bg-indigo-50 p-6 shadow-sm transition hover:bg-indigo-100"
+          className="surface-card editorial-gradient p-6 text-white transition hover:-translate-y-1"
         >
-          <h2 className="font-semibold text-indigo-900">Create listing</h2>
-          <p className="mt-1 text-sm text-indigo-800">List tickets for an event.</p>
+          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/70">Launch</p>
+          <h2 className="mt-4 text-2xl font-bold tracking-[-0.03em]">Create listing</h2>
+          <p className="mt-3 text-sm leading-6 text-white/80">List tickets for an event.</p>
         </Link>
-      </div>
+      </section>
     </div>
   );
 }

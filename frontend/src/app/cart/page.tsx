@@ -12,30 +12,38 @@ export default function CartPage() {
   const router = useRouter();
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-slate-900">Cart</h1>
+    <div className="page-shell space-y-8">
+      <div>
+        <span className="eyebrow">Checkout flow</span>
+        <h1 className="mt-5 text-4xl font-bold tracking-[-0.04em] text-[var(--foreground)]">Cart</h1>
+      </div>
       {lines.length === 0 ? (
-        <p className="text-slate-600">
+        <div className="surface-card empty-state">
           Your cart is empty.{" "}
-          <Link href="/events" className="font-medium text-indigo-600 hover:underline">
+          <Link href="/events" className="font-semibold text-[var(--primary)] hover:underline">
             Browse events
           </Link>
-        </p>
+        </div>
       ) : (
         <>
           <ul className="space-y-3">
             {lines.map((l) => (
               <li
                 key={l.ticketListingId}
-                className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between"
+                className="surface-card flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div>
-                  <p className="font-medium text-slate-900">{l.eventTitle}</p>
-                  <p className="text-sm text-slate-600">{l.seatInfo}</p>
-                  <p className="text-sm text-slate-500">{formatUsd(l.unitPrice)} each</p>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--primary)]">
+                    In your cart
+                  </p>
+                  <p className="mt-3 text-2xl font-bold tracking-[-0.03em] text-[var(--foreground)]">
+                    {l.eventTitle}
+                  </p>
+                  <p className="mt-2 text-sm text-[var(--muted)]">{l.seatInfo}</p>
+                  <p className="mt-1 text-sm text-slate-500">{formatUsd(l.unitPrice)} each</p>
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
-                  <label className="flex items-center gap-2 text-sm text-slate-600">
+                  <label className="flex items-center gap-2 text-sm text-[var(--muted)]">
                     Qty
                     <input
                       type="number"
@@ -44,16 +52,16 @@ export default function CartPage() {
                       onChange={(e) =>
                         setQty(l.ticketListingId, Math.max(1, Number(e.target.value) || 1))
                       }
-                      className="w-16 rounded border border-slate-300 px-2 py-1"
+                      className="field-input w-20 py-3"
                     />
                   </label>
-                  <p className="text-sm font-semibold text-slate-900">
+                  <p className="text-sm font-semibold text-[var(--foreground)]">
                     {formatUsd(l.unitPrice * l.quantity)}
                   </p>
                   <button
                     type="button"
                     onClick={() => removeLine(l.ticketListingId)}
-                    className="text-sm text-red-600 hover:underline"
+                    className="rounded-2xl bg-red-50 px-4 py-2.5 text-sm font-semibold text-red-700 hover:bg-red-100"
                   >
                     Remove
                   </button>
@@ -61,23 +69,27 @@ export default function CartPage() {
               </li>
             ))}
           </ul>
-          <div className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+          <div className="surface-card flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-sm text-slate-600">Subtotal</p>
-              <p className="text-xl font-bold text-slate-900">{formatUsd(subtotal)}</p>
+              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--primary)]">
+                Order total
+              </p>
+              <p className="mt-2 text-3xl font-bold tracking-[-0.03em] text-[var(--foreground)]">
+                {formatUsd(subtotal)}
+              </p>
             </div>
             <div className="flex flex-wrap gap-2">
               <button
                 type="button"
                 onClick={() => clear()}
-                className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium hover:bg-slate-50"
+                className="cta-secondary px-4 py-3 text-sm"
               >
                 Clear cart
               </button>
               {!user ? (
                 <Link
                   href="/login"
-                  className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700"
+                  className="cta-primary px-4 py-3 text-sm"
                 >
                   Log in to checkout
                 </Link>
@@ -85,7 +97,7 @@ export default function CartPage() {
                 <button
                   type="button"
                   onClick={() => router.push("/checkout")}
-                  className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700"
+                  className="cta-primary px-4 py-3 text-sm"
                 >
                   Proceed to checkout
                 </button>

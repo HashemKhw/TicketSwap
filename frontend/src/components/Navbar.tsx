@@ -10,36 +10,77 @@ export function Navbar() {
   const cartCount = lines.reduce((n, l) => n + l.quantity, 0);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur">
-      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4">
-        <Link href="/" className="text-lg font-semibold tracking-tight text-indigo-700">
-          TicketSwap
+    <header className="glass-header sticky top-0 z-40 shadow-[0_10px_30px_rgba(25,28,30,0.05)]">
+      <div className="page-shell flex min-h-20 items-center justify-between gap-5 px-5 sm:px-8">
+        <div className="flex min-w-0 items-center gap-8">
+          <Link
+            href="/"
+            className="font-headline text-xl font-extrabold tracking-[-0.04em] text-[var(--foreground)] sm:text-2xl"
+          >
+            TicketSwap
         </Link>
-        <nav className="flex flex-wrap items-center gap-3 text-sm font-medium text-slate-700">
-          <Link href="/events" className="hover:text-indigo-600">
+          <nav className="hidden items-center gap-5 md:flex">
+            <Link
+              href="/events"
+              className="font-medium tracking-tight text-[var(--foreground)] hover:text-[var(--primary)]"
+            >
+              Events
+            </Link>
+            {user && (
+              <Link
+                href="/sell/new"
+                className="font-medium tracking-tight text-[var(--muted)] hover:text-[var(--primary)]"
+              >
+                Sell
+              </Link>
+            )}
+            {user && (
+              <Link
+                href="/dashboard"
+                className="font-medium tracking-tight text-[var(--muted)] hover:text-[var(--primary)]"
+              >
+                Dashboard
+              </Link>
+            )}
+            {user?.role === "ADMIN" && (
+              <Link
+                href="/admin"
+                className="font-medium tracking-tight text-[var(--secondary)] hover:opacity-80"
+              >
+                Admin
+              </Link>
+            )}
+          </nav>
+        </div>
+        <nav className="flex flex-wrap items-center justify-end gap-2 text-sm">
+          <Link
+            href="/events"
+            className="rounded-full px-3 py-2 font-medium text-[var(--muted)] hover:bg-white hover:text-[var(--primary)] md:hidden"
+          >
             Events
           </Link>
-          {user && (
-            <Link href="/sell/new" className="hover:text-indigo-600">
-              Sell
-            </Link>
-          )}
-          <Link href="/cart" className="relative hover:text-indigo-600">
+          <Link
+            href="/cart"
+            className="relative rounded-full bg-[var(--surface-high)] px-4 py-2 font-semibold text-[var(--foreground)] hover:bg-[var(--surface-highest)]"
+          >
             Cart
             {cartCount > 0 && (
-              <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-indigo-600 px-1 text-[10px] text-white">
+              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--primary)] px-1 text-[10px] font-bold text-white">
                 {cartCount}
               </span>
             )}
           </Link>
           {!loading && !user && (
             <>
-              <Link href="/login" className="hover:text-indigo-600">
+              <Link
+                href="/login"
+                className="rounded-full px-3 py-2 font-medium text-[var(--muted)] hover:bg-white hover:text-[var(--primary)]"
+              >
                 Log in
               </Link>
               <Link
                 href="/register"
-                className="rounded-lg bg-indigo-600 px-3 py-1.5 text-white hover:bg-indigo-700"
+                className="cta-primary px-4 py-2.5 text-sm"
               >
                 Sign up
               </Link>
@@ -47,18 +88,10 @@ export function Navbar() {
           )}
           {!loading && user && (
             <>
-              <Link href="/dashboard" className="hover:text-indigo-600">
-                Dashboard
-              </Link>
-              {user.role === "ADMIN" && (
-                <Link href="/admin" className="text-amber-700 hover:text-amber-800">
-                  Admin
-                </Link>
-              )}
               <button
                 type="button"
                 onClick={logout}
-                className="text-slate-500 hover:text-slate-800"
+                className="rounded-full px-3 py-2 font-medium text-[var(--muted)] hover:bg-white hover:text-[var(--primary)]"
               >
                 Log out
               </button>

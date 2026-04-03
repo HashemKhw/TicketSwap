@@ -17,20 +17,41 @@ export function EventCard({ event }: { event: Event }) {
   return (
     <Link
       href={`/events/${event.id}`}
-      className="group flex flex-col rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-indigo-200 hover:shadow-md"
+      className="surface-card group flex flex-col overflow-hidden p-0 transition duration-300 hover:-translate-y-1"
     >
-      <h2 className="text-lg font-semibold text-slate-900 group-hover:text-indigo-700">
-        {event.title}
-      </h2>
-      <p className="mt-1 line-clamp-2 text-sm text-slate-600">{event.description}</p>
-      <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-xs text-slate-500">
-        <span>{event.location}</span>
-        <span aria-hidden>·</span>
-        <span>{formatDate(event.date)}</span>
+      <div className="relative aspect-[16/10] overflow-hidden rounded-t-[1.5rem] editorial-gradient">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.25),transparent_38%)]" />
+        <div className="absolute left-5 top-5">
+          <span className="rounded-full bg-white/14 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-white backdrop-blur">
+            Verified event
+          </span>
+        </div>
+        <div className="absolute bottom-5 left-5 right-5 text-white">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/80">
+            {event.location}
+          </p>
+          <h2 className="mt-2 text-2xl font-bold tracking-[-0.03em]">{event.title}</h2>
+        </div>
       </div>
-      <p className="mt-2 text-xs font-medium text-indigo-600">
-        {count} listing{count === 1 ? "" : "s"} available
-      </p>
+      <div className="p-6">
+        <p className="line-clamp-3 text-sm leading-6 text-[var(--muted)]">{event.description}</p>
+        <div className="mt-6 flex items-center justify-between gap-3">
+          <div className="space-y-1">
+            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--primary)]">
+              Event date
+            </p>
+            <p className="text-sm font-semibold text-[var(--foreground)]">{formatDate(event.date)}</p>
+          </div>
+          <div className="rounded-full bg-[var(--surface-low)] px-3 py-2 text-right">
+            <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-500">
+              Listings
+            </p>
+            <p className="text-sm font-bold text-[var(--primary)]">
+              {count} available
+            </p>
+          </div>
+        </div>
+      </div>
     </Link>
   );
 }

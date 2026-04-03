@@ -1,19 +1,207 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --background: #f7f9fb;
+  --foreground: #191c1e;
+  --surface: #f7f9fb;
+  --surface-low: #f2f4f6;
+  --surface-card: #ffffff;
+  --surface-high: #e6e8ea;
+  --surface-highest: #e0e3e5;
+  --outline-soft: rgba(199, 196, 216, 0.5);
+  --primary: #3525cd;
+  --primary-strong: #4f46e5;
+  --secondary: #712ae2;
+  --secondary-soft: #8a4cfc;
+  --tertiary: #003fac;
+  --muted: #464555;
+  --shadow-soft: 0 20px 40px rgba(25, 28, 30, 0.06);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-body);
+  --font-headline: var(--font-display);
+  --color-primary: var(--primary);
+  --color-primary-strong: var(--primary-strong);
+  --color-secondary: var(--secondary);
+  --color-surface: var(--surface);
+  --color-surface-low: var(--surface-low);
+  --color-surface-card: var(--surface-card);
+  --color-surface-high: var(--surface-high);
+  --color-surface-highest: var(--surface-highest);
+  --color-muted: var(--muted);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-family: var(--font-body), system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: var(--font-display), system-ui, sans-serif;
+}
+
+a,
+button {
+  transition:
+    color 180ms ease,
+    background-color 180ms ease,
+    border-color 180ms ease,
+    transform 180ms ease,
+    opacity 180ms ease;
+}
+
+::selection {
+  background: rgba(79, 70, 229, 0.16);
+}
+
+.glass-header {
+  background: rgba(247, 249, 251, 0.72);
+  backdrop-filter: blur(20px);
+}
+
+.editorial-gradient {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-strong) 100%);
+}
+
+.page-shell {
+  width: 100%;
+  max-width: 80rem;
+  margin: 0 auto;
+}
+
+.surface-block {
+  background: var(--surface-low);
+  border-radius: 2rem;
+}
+
+.surface-card {
+  background: var(--surface-card);
+  border: 1px solid rgba(199, 196, 216, 0.15);
+  border-radius: 1.5rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.field-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.field-input {
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 1rem;
+  background: var(--surface-highest);
+  color: var(--foreground);
+  padding: 0.9rem 1rem;
+  outline: none;
+}
+
+.field-input:focus {
+  border-color: rgba(53, 37, 205, 0.22);
+  box-shadow: 0 0 0 4px rgba(53, 37, 205, 0.08);
+  background: var(--surface-card);
+}
+
+.cta-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-strong) 100%);
+  color: white;
+  font-weight: 700;
+  box-shadow: 0 18px 30px rgba(53, 37, 205, 0.18);
+}
+
+.cta-primary:hover {
+  transform: translateY(-1px);
+}
+
+.cta-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 1rem;
+  background: var(--surface-high);
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  background: rgba(138, 76, 252, 0.1);
+  color: var(--secondary);
+  padding: 0.45rem 0.85rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.page-heading {
+  font-size: clamp(2.1rem, 4vw, 4.6rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  font-weight: 800;
+}
+
+.muted-copy {
+  color: var(--muted);
+}
+
+.info-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 9999px;
+  background: var(--surface-high);
+  padding: 0.45rem 0.8rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.editorial-section {
+  margin-top: 5rem;
+}
+
+.empty-state {
+  padding: 3rem 1.5rem;
+  text-align: center;
+  color: var(--muted);
+}
+
+.subtle-divider {
+  border-top: 1px solid rgba(199, 196, 216, 0.15);
+}
+
+@media (max-width: 768px) {
+  .page-heading {
+    line-height: 1.02;
+  }
 }

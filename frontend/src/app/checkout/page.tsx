@@ -16,7 +16,7 @@ export default function CheckoutPage() {
   if (loading) return <p className="text-slate-600">Loading…</p>;
   if (!user) {
     return (
-      <div className="rounded-lg border border-amber-200 bg-amber-50 p-6 text-amber-900">
+      <div className="page-shell surface-card rounded-2xl bg-amber-50 p-6 text-amber-900">
         Please{" "}
         <Link href="/login" className="font-semibold underline">
           log in
@@ -28,9 +28,9 @@ export default function CheckoutPage() {
 
   if (lines.length === 0) {
     return (
-      <p className="text-slate-600">
+      <p className="page-shell text-slate-600">
         Cart is empty.{" "}
-        <Link href="/events" className="text-indigo-600 hover:underline">
+        <Link href="/events" className="text-[var(--primary)] hover:underline">
           Browse events
         </Link>
       </p>
@@ -59,43 +59,88 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="mx-auto max-w-lg space-y-6">
-      <h1 className="text-2xl font-bold text-slate-900">Checkout</h1>
-      <p className="text-sm text-slate-600">
-        You will be redirected to Stripe Checkout (test mode). Use card{" "}
-        <code className="rounded bg-slate-100 px-1">4242 4242 4242 4242</code>.
-      </p>
-      <ul className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-        {lines.map((l) => (
-          <li key={l.ticketListingId} className="flex justify-between py-2 text-sm">
-            <span>
-              {l.eventTitle} — {l.seatInfo} × {l.quantity}
+    <div className="page-shell grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
+      <section className="space-y-6">
+        <div>
+          <span className="eyebrow">Secure checkout</span>
+          <h1 className="mt-5 text-4xl font-bold tracking-[-0.04em] text-[var(--foreground)]">
+            Complete purchase
+          </h1>
+          <p className="mt-4 max-w-xl text-sm leading-7 text-[var(--muted)]">
+            You&apos;ll be redirected to Stripe Checkout in test mode. Use{" "}
+            <code className="rounded-full bg-[var(--surface-high)] px-3 py-1 font-semibold">
+              4242 4242 4242 4242
+            </code>{" "}
+            for test payments.
+          </p>
+        </div>
+        <div className="surface-card p-8">
+          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--primary)]">
+            Payment flow
+          </p>
+          <h2 className="mt-3 text-2xl font-bold tracking-[-0.03em]">Protected by Stripe</h2>
+          <div className="mt-6 grid gap-3 sm:grid-cols-3">
+            <div className="rounded-[1.25rem] bg-[var(--surface-low)] px-4 py-5 text-center text-sm font-semibold">
+              Credit Card
+            </div>
+            <div className="rounded-[1.25rem] bg-[var(--surface-low)] px-4 py-5 text-center text-sm font-semibold text-slate-500">
+              Apple Pay
+            </div>
+            <div className="rounded-[1.25rem] bg-[var(--surface-low)] px-4 py-5 text-center text-sm font-semibold text-slate-500">
+              Google Pay
+            </div>
+          </div>
+          <div className="subtle-divider mt-8 pt-8">
+            <p className="text-sm leading-7 text-[var(--muted)]">
+              Your order is confirmed on the return page after Stripe redirects you back to
+              TicketSwap.
+            </p>
+          </div>
+        </div>
+      </section>
+      <aside className="space-y-5">
+        <div className="surface-card overflow-hidden p-8">
+          <div className="h-1 w-full rounded-full editorial-gradient" />
+          <h2 className="mt-6 text-2xl font-bold tracking-[-0.03em] text-[var(--foreground)]">
+            Order summary
+          </h2>
+          <ul className="mt-6 space-y-4">
+            {lines.map((l) => (
+              <li
+                key={l.ticketListingId}
+                className="flex items-start justify-between gap-4 rounded-[1.25rem] bg-[var(--surface-low)] px-4 py-4 text-sm"
+              >
+                <span className="leading-6 text-[var(--muted)]">
+                  {l.eventTitle} — {l.seatInfo} × {l.quantity}
+                </span>
+                <span className="font-semibold text-[var(--foreground)]">
+                  {formatUsd(l.unitPrice * l.quantity)}
+                </span>
+              </li>
+            ))}
+          </ul>
+          <div className="subtle-divider mt-6 flex items-center justify-between pt-5">
+            <span className="text-lg font-bold">Total</span>
+            <span className="text-3xl font-bold tracking-[-0.03em] text-[var(--primary)]">
+              {formatUsd(subtotal)}
             </span>
-            <span className="font-medium">{formatUsd(l.unitPrice * l.quantity)}</span>
-          </li>
-        ))}
-        <li className="mt-2 flex justify-between border-t border-slate-200 pt-3 font-semibold">
-          <span>Total</span>
-          <span>{formatUsd(subtotal)}</span>
-        </li>
-      </ul>
-      {err && <p className="text-sm text-red-600">{err}</p>}
-      <div className="flex gap-3">
-        <Link
-          href="/cart"
-          className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium hover:bg-slate-50"
-        >
-          Back to cart
-        </Link>
-        <button
-          type="button"
-          disabled={pending}
-          onClick={pay}
-          className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-60"
-        >
-          {pending ? "Redirecting…" : "Pay with Stripe"}
-        </button>
-      </div>
+          </div>
+          {err && <p className="mt-5 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">{err}</p>}
+          <div className="mt-6 flex gap-3">
+            <Link href="/cart" className="cta-secondary px-4 py-3 text-sm">
+              Back to cart
+            </Link>
+            <button
+              type="button"
+              disabled={pending}
+              onClick={pay}
+              className="cta-primary flex-1 px-4 py-3 text-sm disabled:opacity-60"
+            >
+              {pending ? "Redirecting…" : "Pay with Stripe"}
+            </button>
+          </div>
+        </div>
+      </aside>
     </div>
   );
 }

@@ -32,25 +32,27 @@ function SuccessInner() {
   }, [sessionId, clear]);
 
   return (
-    <div className="mx-auto max-w-md space-y-4 text-center">
+    <div className="mx-auto max-w-2xl space-y-6 text-center">
       {status === "idle" && <p className="text-slate-600">Confirming payment…</p>}
       {status === "ok" && (
-        <>
-          <h1 className="text-2xl font-bold text-emerald-800">Success</h1>
+        <div className="surface-card space-y-4 p-10">
+          <span className="eyebrow">Payment confirmed</span>
+          <h1 className="text-4xl font-bold tracking-[-0.04em] text-emerald-800">Success</h1>
           <p className="text-slate-700">{message}</p>
-        </>
+        </div>
       )}
       {status === "err" && (
-        <>
-          <h1 className="text-2xl font-bold text-red-800">Something went wrong</h1>
+        <div className="surface-card space-y-4 p-10">
+          <span className="eyebrow">Checkout issue</span>
+          <h1 className="text-4xl font-bold tracking-[-0.04em] text-red-800">Something went wrong</h1>
           <p className="text-slate-700">{message}</p>
-        </>
+        </div>
       )}
       <div className="flex justify-center gap-3 pt-4">
-        <Link href="/dashboard/orders" className="text-indigo-600 hover:underline">
+        <Link href="/dashboard/orders" className="cta-secondary px-4 py-3 text-sm">
           My orders
         </Link>
-        <Link href="/events" className="text-indigo-600 hover:underline">
+        <Link href="/events" className="cta-primary px-4 py-3 text-sm">
           Browse events
         </Link>
       </div>

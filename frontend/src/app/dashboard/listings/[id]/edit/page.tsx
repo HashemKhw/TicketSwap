@@ -59,14 +59,19 @@ export default function EditListingPage() {
   if (loading || !user) return <p className="text-slate-600">Loading…</p>;
 
   return (
-    <div className="mx-auto max-w-lg">
-      <Link href="/dashboard/listings" className="text-sm font-medium text-indigo-600 hover:underline">
+    <div className="mx-auto max-w-2xl">
+      <Link href="/dashboard/listings" className="text-sm font-semibold text-[var(--primary)] hover:underline">
         ← My listings
       </Link>
-      <h1 className="mt-4 text-2xl font-bold text-slate-900">Edit listing</h1>
-      <form onSubmit={onSubmit} className="mt-6 space-y-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="mt-6">
+        <span className="eyebrow">Update inventory</span>
+        <h1 className="mt-5 text-4xl font-bold tracking-[-0.04em] text-[var(--foreground)]">
+          Edit listing
+        </h1>
+      </div>
+      <form onSubmit={onSubmit} className="surface-card mt-8 space-y-5 p-8">
         <div>
-          <label className="block text-sm font-medium text-slate-700">Price (USD)</label>
+          <label className="field-label">Price (USD)</label>
           <input
             type="number"
             step="0.01"
@@ -74,34 +79,34 @@ export default function EditListingPage() {
             required
             value={price}
             onChange={(e) => setPrice(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+            className="field-input"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700">Quantity</label>
+          <label className="field-label">Quantity</label>
           <input
             type="number"
             min={0}
             required
             value={quantity}
             onChange={(e) => setQuantity(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+            className="field-input"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700">Seat info</label>
+          <label className="field-label">Seat info</label>
           <input
             required
             value={seatInfo}
             onChange={(e) => setSeatInfo(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+            className="field-input"
           />
         </div>
-        {err && <p className="text-sm text-red-600">{err}</p>}
+        {err && <p className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">{err}</p>}
         <button
           type="submit"
           disabled={pending}
-          className="w-full rounded-lg bg-indigo-600 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-60"
+          className="cta-primary w-full px-5 py-4 text-sm disabled:opacity-60"
         >
           {pending ? "Saving…" : "Save changes"}
         </button>

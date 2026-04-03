@@ -39,58 +39,63 @@ export default function AdminNewEventPage() {
   if (loading || !user || user.role !== "ADMIN") return <p className="text-slate-600">Loading…</p>;
 
   return (
-    <div className="mx-auto max-w-lg">
-      <Link href="/admin/events" className="text-sm text-indigo-600 hover:underline">
+    <div className="mx-auto max-w-2xl">
+      <Link href="/admin/events" className="text-sm font-semibold text-[var(--primary)] hover:underline">
         ← Events
       </Link>
-      <h1 className="mt-4 text-2xl font-bold text-slate-900">Create event</h1>
+      <div className="mt-6">
+        <span className="eyebrow">Admin publishing</span>
+        <h1 className="mt-5 text-4xl font-bold tracking-[-0.04em] text-[var(--foreground)]">
+          Create event
+        </h1>
+      </div>
       <form
         onSubmit={onSubmit}
-        className="mt-6 space-y-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
+        className="surface-card mt-8 space-y-5 p-8"
       >
         <div>
-          <label className="block text-sm font-medium text-slate-700">Title</label>
+          <label className="field-label">Title</label>
           <input
             required
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+            className="field-input"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700">Description</label>
+          <label className="field-label">Description</label>
           <textarea
             required
             rows={4}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+            className="field-input"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700">Location</label>
+          <label className="field-label">Location</label>
           <input
             required
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+            className="field-input"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700">Date & time</label>
+          <label className="field-label">Date & time</label>
           <input
             type="datetime-local"
             required
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+            className="field-input"
           />
         </div>
-        {err && <p className="text-sm text-red-600">{err}</p>}
+        {err && <p className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">{err}</p>}
         <button
           type="submit"
           disabled={pending}
-          className="w-full rounded-lg bg-amber-600 py-2.5 text-sm font-semibold text-white hover:bg-amber-700 disabled:opacity-60"
+          className="cta-primary w-full px-5 py-4 text-sm disabled:opacity-60"
         >
           {pending ? "Creating…" : "Create event"}
         </button>

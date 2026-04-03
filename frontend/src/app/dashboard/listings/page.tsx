@@ -38,41 +38,51 @@ export default function MyListingsPage() {
   if (loading || !user) return <p className="text-slate-600">Loading…</p>;
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold text-slate-900">My listings</h1>
+    <div className="page-shell space-y-8">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <span className="eyebrow">Seller inventory</span>
+          <h1 className="mt-5 text-4xl font-bold tracking-[-0.04em] text-[var(--foreground)]">
+            My listings
+          </h1>
+        </div>
         <Link
           href="/sell/new"
-          className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700"
+          className="cta-primary px-5 py-3 text-sm"
         >
           New listing
         </Link>
       </div>
-      {err && <p className="text-sm text-red-600">{err}</p>}
+      {err && <p className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">{err}</p>}
       <ul className="space-y-3">
         {listings.map((l) => (
           <li
             key={l.id}
-            className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between"
+            className="surface-card flex flex-col gap-5 p-6 sm:flex-row sm:items-center sm:justify-between"
           >
             <div>
-              <p className="font-medium text-slate-900">{l.event?.title ?? "Event"}</p>
-              <p className="text-sm text-slate-600">{l.seatInfo}</p>
-              <p className="text-sm text-slate-500">
+              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--primary)]">
+                Active listing
+              </p>
+              <p className="mt-3 text-2xl font-bold tracking-[-0.03em] text-[var(--foreground)]">
+                {l.event?.title ?? "Event"}
+              </p>
+              <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{l.seatInfo}</p>
+              <p className="mt-2 text-sm text-slate-500">
                 {formatUsd(toNumber(l.price))} · Qty {l.quantity}
               </p>
             </div>
             <div className="flex gap-2">
               <Link
                 href={`/dashboard/listings/${l.id}/edit`}
-                className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium hover:bg-slate-50"
+                className="cta-secondary px-4 py-2.5 text-sm"
               >
                 Edit
               </Link>
               <button
                 type="button"
                 onClick={() => remove(l.id)}
-                className="rounded-lg border border-red-200 px-3 py-1.5 text-sm font-medium text-red-700 hover:bg-red-50"
+                className="rounded-2xl bg-red-50 px-4 py-2.5 text-sm font-semibold text-red-700 hover:bg-red-100"
               >
                 Delete
               </button>
@@ -81,7 +91,7 @@ export default function MyListingsPage() {
         ))}
       </ul>
       {listings.length === 0 && !err && (
-        <p className="text-slate-600">You have no listings yet.</p>
+        <div className="surface-card empty-state">You have no listings yet.</div>
       )}
     </div>
   );
