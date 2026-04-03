@@ -71,6 +71,10 @@ export default function MyListingsPage() {
               <p className="mt-2 text-sm text-slate-500">
                 {formatUsd(toNumber(l.price))} · Qty {l.quantity}
               </p>
+              <p className="mt-2 text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
+                {l.ticketType === "MOBILE_TRANSFER" ? "Mobile Transfer" : "PDF"}
+                {l.ticketType === "PDF" && l.pdfFileName ? ` · ${l.pdfFileName}` : ""}
+              </p>
             </div>
             <div className="flex gap-2">
               <Link

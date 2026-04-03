@@ -29,42 +29,74 @@ model Event {
   description String
   location    String
   date        DateTime
+  imageUrl    String?
   createdAt   DateTime @default(now())
 
   listings TicketListing[]
 }
 
 model TicketListing {
-  id        String   @id @default(uuid())
-  eventId   String
-  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  sellerId  String
-  seller    User     @relation(fields: [sellerId], references: [id], onDelete: Cascade)
-  price     Decimal  @db.Decimal(10, 2)
-  quantity  Int
-  seatInfo  String
-  createdAt DateTime @default(now())
+  id             String      @id @default(uuid())
+  eventId        String
+  event          Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  sellerId       String
+  seller         User        @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  price          Decimal     @db.Decimal(10, 2)
+  quantity       Int
+  seatInfo       String
+  seatSection    String?
+  seatRow        String?
+  seatFrom       Int?
+  seatTo         Int?
+  seatsTogether  Boolean     @default(false)
+  ticketType     TicketType  @default(PDF)
+  pdfFilePath    String?
+  pdfFileName    String?
+  pdfUploadedAt  DateTime?
+  createdAt      DateTime    @default(now())
 
   orders Order[]
 }
 
 model Order {
-  id              String        @id @default(uuid())
-  buyerId         String
-  buyer           User          @relation("BuyerOrders", fields: [buyerId], references: [id])
-  ticketListingId String
-  listing         TicketListing @relation(fields: [ticketListingId], references: [id])
-  totalPrice      Decimal       @db.Decimal(10, 2)
-  quantity        Int           @default(1)
-  status          OrderStatus   @default(PENDING)
-  stripeSessionId String?
-  createdAt       DateTime      @default(now())
+  id                 String             @id @default(uuid())
+  buyerId            String
+  buyer              User               @relation("BuyerOrders", fields: [buyerId], references: [id])
+  buyerName          String?
+  ticketListingId    String
+  listing            TicketListing      @relation(fields: [ticketListingId], references: [id])
+  totalPrice         Decimal            @db.Decimal(10, 2)
+  quantity           Int                @default(1)
+  status             OrderStatus        @default(PENDING)
+  fulfillmentStatus  FulfillmentStatus  @default(PENDING)
+  stripeSessionId    String?
+  ticketPdfPath      String?
+  ticketPdfFileName  String?
+  pdfUploadedAt      DateTime?
+  sellerDeliveryNote String?
+  transferProofPath  String?
+  transferProofName  String?
+  transferConfirmedAt DateTime?
+  createdAt          DateTime           @default(now())
 
   @@index([buyerId])
   @@index([stripeSessionId])
+  @@index([fulfillmentStatus])
 }
 
 enum OrderStatus {
   PENDING
   PAID
+}
+
+enum TicketType {
+  PDF
+  MOBILE_TRANSFER
+}
+
+enum FulfillmentStatus {
+  PENDING
+  AWAITING_SELLER
+  READY
+  TRANSFERRED
 }

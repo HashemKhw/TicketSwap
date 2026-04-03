@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { z } from "zod";
 import Stripe from "stripe";
+import { FulfillmentStatus, TicketType } from "@prisma/client";
 import { prisma } from "../prisma.js";
 import { requireAuth } from "../middleware/auth.js";
 
@@ -12,11 +13,23 @@ const checkoutItemSchema = z.object({
 });
 
 const checkoutSchema = z.object({
+  buyerName: z.string().trim().min(2),
   items: z.array(checkoutItemSchema).min(1),
 });
 
 const paySchema = z.object({
   sessionId: z.string().min(1),
+});
+
+const assetSchema = z.object({
+  path: z.string().min(1),
+  fileName: z.string().min(1),
+});
+
+const fulfillmentUpdateSchema = z.object({
+  action: z.enum(["upload_pdf", "confirm_mobile_transfer"]),
+  asset: assetSchema.optional(),
+  note: z.string().trim().max(1000).optional(),
 });
 
 function getStripe(): Stripe {
@@ -41,7 +54,7 @@ router.post("/", requireAuth, async (req, res) => {
     res.status(400).json({ error: parsed.error.flatten() });
     return;
   }
-  const { items } = parsed.data;
+  const { items, buyerName } = parsed.data;
   const buyerId = req.user!.sub;
   const seen = new Set<string>();
   for (const i of items) {
@@ -78,10 +91,18 @@ router.post("/", requireAuth, async (req, res) => {
         const order = await tx.order.create({
           data: {
             buyerId,
+            buyerName,
             ticketListingId,
             quantity,
             totalPrice: totalPrice,
             status: "PENDING",
+            fulfillmentStatus:
+              listing.ticketType === TicketType.PDF && listing.pdfFilePath
+                ? FulfillmentStatus.READY
+                : FulfillmentStatus.AWAITING_SELLER,
+            ticketPdfPath: listing.ticketType === TicketType.PDF ? listing.pdfFilePath : null,
+            ticketPdfFileName: listing.ticketType === TicketType.PDF ? listing.pdfFileName : null,
+            pdfUploadedAt: listing.ticketType === TicketType.PDF ? listing.pdfUploadedAt : null,
           },
         });
         createdOrderIds.push(order.id);
@@ -154,6 +175,91 @@ router.get("/sales", requireAuth, async (req, res) => {
     orderBy: { createdAt: "desc" },
   });
   res.json({ orders });
+});
+
+router.put("/:id/fulfillment", requireAuth, async (req, res) => {
+  const parsed = fulfillmentUpdateSchema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.flatten() });
+    return;
+  }
+
+  const order = await prisma.order.findUnique({
+    where: { id: String(req.params.id) },
+    include: {
+      listing: {
+        include: { event: { select: { id: true, title: true, date: true, location: true } } },
+      },
+      buyer: { select: { id: true, email: true } },
+    },
+  });
+
+  if (!order) {
+    res.status(404).json({ error: "Order not found" });
+    return;
+  }
+
+  if (order.listing.sellerId !== req.user!.sub && req.user!.role !== "ADMIN") {
+    res.status(403).json({ error: "Not your sale" });
+    return;
+  }
+
+  if (order.status !== "PAID") {
+    res.status(400).json({ error: "Fulfillment is only available after payment" });
+    return;
+  }
+
+  const { action, asset, note } = parsed.data;
+  if (action === "upload_pdf") {
+    if (order.listing.ticketType !== TicketType.PDF) {
+      res.status(400).json({ error: "Only PDF listings can receive PDF uploads" });
+      return;
+    }
+    if (!asset) {
+      res.status(400).json({ error: "A PDF upload is required" });
+      return;
+    }
+
+    const updated = await prisma.order.update({
+      where: { id: order.id },
+      data: {
+        ticketPdfPath: asset.path,
+        ticketPdfFileName: asset.fileName,
+        pdfUploadedAt: new Date(),
+        sellerDeliveryNote: note,
+        fulfillmentStatus: FulfillmentStatus.READY,
+      },
+      include: {
+        buyer: { select: { id: true, email: true } },
+        listing: { include: { event: { select: { id: true, title: true, date: true, location: true } } } },
+      },
+    });
+
+    res.json({ order: updated });
+    return;
+  }
+
+  if (order.listing.ticketType !== TicketType.MOBILE_TRANSFER) {
+    res.status(400).json({ error: "Only mobile transfer listings can confirm a transfer" });
+    return;
+  }
+
+  const updated = await prisma.order.update({
+    where: { id: order.id },
+    data: {
+      transferProofPath: asset?.path,
+      transferProofName: asset?.fileName,
+      transferConfirmedAt: new Date(),
+      sellerDeliveryNote: note,
+      fulfillmentStatus: FulfillmentStatus.TRANSFERRED,
+    },
+    include: {
+      buyer: { select: { id: true, email: true } },
+      listing: { include: { event: { select: { id: true, title: true, date: true, location: true } } } },
+    },
+  });
+
+  res.json({ order: updated });
 });
 
 async function fulfillOrdersFromSession(sessionId: string): Promise<{ ok: boolean; error?: string }> {

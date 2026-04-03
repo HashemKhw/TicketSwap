@@ -107,6 +107,7 @@ export async function createEvent(data: {
   description: string;
   location: string;
   date: string;
+  imageUrl?: string;
 }) {
   return api<{ event: import("./types").Event }>("/events", {
     method: "POST",
@@ -116,7 +117,7 @@ export async function createEvent(data: {
 
 export async function updateEvent(
   id: string,
-  data: Partial<{ title: string; description: string; location: string; date: string }>
+  data: Partial<{ title: string; description: string; location: string; date: string; imageUrl: string }>
 ) {
   return api<{ event: import("./types").Event }>(`/events/${id}`, {
     method: "PUT",
@@ -139,7 +140,14 @@ export async function createListing(body: {
   eventId: string;
   price: number;
   quantity: number;
-  seatInfo: string;
+  seatInfo?: string;
+  seatSection?: string;
+  seatRow?: string;
+  seatFrom?: number;
+  seatTo?: number;
+  seatsTogether: boolean;
+  ticketType: import("./types").TicketType;
+  pdfAsset?: { path: string; fileName: string };
 }) {
   return api<{ listing: import("./types").TicketListing }>("/tickets", {
     method: "POST",
@@ -149,7 +157,19 @@ export async function createListing(body: {
 
 export async function updateListing(
   id: string,
-  body: Partial<{ price: number; quantity: number; seatInfo: string }>
+  body: Partial<{
+    price: number;
+    quantity: number;
+    seatInfo: string;
+    seatSection: string;
+    seatRow: string;
+    seatFrom: number | null;
+    seatTo: number | null;
+    seatsTogether: boolean;
+    ticketType: import("./types").TicketType;
+    pdfAsset: { path: string; fileName: string } | null;
+    clearPdfAsset: boolean;
+  }>
 ) {
   return api<{ listing: import("./types").TicketListing }>(`/tickets/${id}`, {
     method: "PUT",
@@ -165,10 +185,13 @@ export async function fetchMyListings() {
   return api<{ listings: import("./types").TicketListing[] }>("/tickets/my/listings");
 }
 
-export async function createCheckout(items: { ticketListingId: string; quantity: number }[]) {
+export async function createCheckout(
+  buyerName: string,
+  items: { ticketListingId: string; quantity: number }[]
+) {
   return api<{ sessionId: string; url: string | null; orderIds: string[] }>("/orders", {
     method: "POST",
-    body: JSON.stringify({ items }),
+    body: JSON.stringify({ buyerName, items }),
   });
 }
 
@@ -192,4 +215,42 @@ export async function payOrder(orderId: string, sessionId: string) {
     method: "PUT",
     body: JSON.stringify({ sessionId }),
   });
+}
+
+export async function updateOrderFulfillment(
+  orderId: string,
+  body: {
+    action: "upload_pdf" | "confirm_mobile_transfer";
+    asset?: { path: string; fileName: string };
+    note?: string;
+  }
+) {
+  return api<{ order: import("./types").Order }>(`/orders/${orderId}/fulfillment`, {
+    method: "PUT",
+    body: JSON.stringify(body),
+  });
+}
+
+async function uploadFile(
+  path: "/uploads/event-image" | "/uploads/ticket-pdf" | "/uploads/transfer-proof",
+  file: File
+) {
+  const formData = new FormData();
+  formData.append("file", file);
+  return api<{ asset: import("./types").UploadedAsset }>(path, {
+    method: "POST",
+    body: formData,
+  });
+}
+
+export async function uploadEventImage(file: File) {
+  return uploadFile("/uploads/event-image", file);
+}
+
+export async function uploadTicketPdf(file: File) {
+  return uploadFile("/uploads/ticket-pdf", file);
+}
+
+export async function uploadTransferProof(file: File) {
+  return uploadFile("/uploads/transfer-proof", file);
 }

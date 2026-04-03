@@ -10,6 +10,7 @@ const createEventSchema = z.object({
   description: z.string(),
   location: z.string().min(1),
   date: z.string().datetime(),
+  imageUrl: z.string().url().optional().or(z.literal("")).transform((value) => value || undefined),
 });
 
 router.get("/", async (_req, res) => {
@@ -49,13 +50,14 @@ router.post("/", requireAuth, requireAdmin, async (req, res) => {
     res.status(400).json({ error: parsed.error.flatten() });
     return;
   }
-  const { title, description, location, date } = parsed.data;
+  const { title, description, location, date, imageUrl } = parsed.data;
   const event = await prisma.event.create({
     data: {
       title,
       description,
       location,
       date: new Date(date),
+      imageUrl,
     },
   });
   res.status(201).json({ event });

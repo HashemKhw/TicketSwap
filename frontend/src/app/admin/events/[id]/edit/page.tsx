@@ -1,10 +1,11 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
-import { fetchEvent, updateEvent } from "@/lib/api";
+import { fetchEvent, updateEvent, uploadEventImage } from "@/lib/api";
 
 function toLocalInput(iso: string) {
   const d = new Date(iso);
@@ -21,8 +22,10 @@ export default function AdminEditEventPage() {
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
   const [date, setDate] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   const [err, setErr] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) router.replace("/login");
@@ -38,9 +41,24 @@ export default function AdminEditEventPage() {
         setDescription(e.description);
         setLocation(e.location);
         setDate(toLocalInput(e.date));
+        setImageUrl(e.imageUrl ?? "");
       })
       .catch((ex) => setErr(ex instanceof Error ? ex.message : "Not found"));
   }, [user, id]);
+
+  async function onImageSelected(file: File | null) {
+    if (!file) return;
+    setErr(null);
+    setUploadingImage(true);
+    try {
+      const response = await uploadEventImage(file);
+      setImageUrl(response.asset.url ?? "");
+    } catch (error) {
+      setErr(error instanceof Error ? error.message : "Image upload failed");
+    } finally {
+      setUploadingImage(false);
+    }
+  }
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -48,7 +66,7 @@ export default function AdminEditEventPage() {
     setPending(true);
     try {
       const iso = new Date(date).toISOString();
-      await updateEvent(id, { title, description, location, date: iso });
+      await updateEvent(id, { title, description, location, date: iso, imageUrl: imageUrl || undefined });
       router.push("/admin/events");
     } catch (ex) {
       setErr(ex instanceof Error ? ex.message : "Failed");
@@ -111,6 +129,25 @@ export default function AdminEditEventPage() {
             onChange={(e) => setDate(e.target.value)}
             className="field-input"
           />
+        </div>
+        <div>
+          <label className="field-label">Event photo</label>
+          <input
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            onChange={(e) => onImageSelected(e.target.files?.[0] ?? null)}
+            className="field-input"
+          />
+          <p className="mt-2 text-sm text-[var(--muted)]">
+            {uploadingImage
+              ? "Uploading image..."
+              : imageUrl
+                ? "Image uploaded and ready."
+                : "Optional. Add a visual for event cards and detail pages."}
+          </p>
+          {imageUrl && (
+            <img src={imageUrl} alt="Event preview" className="mt-3 h-40 w-full rounded-[1.25rem] object-cover" />
+          )}
         </div>
         {err && <p className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">{err}</p>}
         <button

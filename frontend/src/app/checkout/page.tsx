@@ -10,6 +10,7 @@ import { formatUsd } from "@/lib/money";
 export default function CheckoutPage() {
   const { user, loading } = useAuth();
   const { lines, subtotal } = useCart();
+  const [buyerName, setBuyerName] = useState("");
   const [err, setErr] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
@@ -39,13 +40,17 @@ export default function CheckoutPage() {
 
   async function pay() {
     setErr(null);
+    if (buyerName.trim().length < 2) {
+      setErr("Enter the buyer full name before checkout.");
+      return;
+    }
     setPending(true);
     try {
       const items = lines.map((l) => ({
         ticketListingId: l.ticketListingId,
         quantity: l.quantity,
       }));
-      const { url } = await createCheckout(items);
+      const { url } = await createCheckout(buyerName.trim(), items);
       if (url) {
         window.location.href = url;
         return;
@@ -79,6 +84,15 @@ export default function CheckoutPage() {
             Payment flow
           </p>
           <h2 className="mt-3 text-2xl font-bold tracking-[-0.03em]">Protected by Stripe</h2>
+          <div className="mt-6">
+            <label className="field-label">Buyer full name</label>
+            <input
+              value={buyerName}
+              onChange={(e) => setBuyerName(e.target.value)}
+              placeholder="Name used for the ticket transfer"
+              className="field-input"
+            />
+          </div>
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
             <div className="rounded-[1.25rem] bg-[var(--surface-low)] px-4 py-5 text-center text-sm font-semibold">
               Credit Card

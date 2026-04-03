@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import type { Event } from "@/lib/types";
 
@@ -20,7 +21,11 @@ export function EventCard({ event }: { event: Event }) {
       className="surface-card group flex flex-col overflow-hidden p-0 transition duration-300 hover:-translate-y-1"
     >
       <div className="relative aspect-[16/10] overflow-hidden rounded-t-[1.5rem] editorial-gradient">
+        {event.imageUrl ? (
+          <img src={event.imageUrl} alt={event.title} className="absolute inset-0 h-full w-full object-cover" />
+        ) : null}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.25),transparent_38%)]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[rgba(25,28,30,0.6)] to-transparent" />
         <div className="absolute left-5 top-5">
           <span className="rounded-full bg-white/14 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-white backdrop-blur">
             Verified event

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useParams } from "next/navigation";
@@ -55,7 +56,11 @@ export default function EventDetailPage() {
   return (
     <div className="page-shell space-y-10">
       <section className="relative overflow-hidden rounded-[2rem] editorial-gradient px-6 py-10 text-white md:px-10 md:py-14">
+        {event.imageUrl ? (
+          <img src={event.imageUrl} alt={event.title} className="absolute inset-0 h-full w-full object-cover" />
+        ) : null}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.25),transparent_35%)]" />
+        <div className="absolute inset-0 bg-[rgba(25,28,30,0.35)]" />
         <div className="relative z-10">
           <Link href="/events" className="text-sm font-semibold text-white/80 hover:text-white">
             ← Back to events
@@ -136,6 +141,9 @@ export default function EventDetailPage() {
                       <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
                         Seller: {l.seller?.email ?? "—"} · {l.quantity} ticket
                         {l.quantity === 1 ? "" : "s"} left
+                      </p>
+                      <p className="mt-2 text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
+                        {l.ticketType === "MOBILE_TRANSFER" ? "Mobile Transfer" : "PDF"}
                       </p>
                     </div>
                     <span className="rounded-full bg-[rgba(138,76,252,0.1)] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.15em] text-[var(--secondary)]">
