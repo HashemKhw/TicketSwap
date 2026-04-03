@@ -4,6 +4,7 @@ import "./globals.css";
 import { Providers } from "@/components/Providers";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { AnalyticsInit } from "@/components/AnalyticsInit";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,6 +32,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} flex min-h-dvh flex-col antialiased`}
       >
         <Providers>
+          <AnalyticsInit />
           <Navbar />
           <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8">{children}</main>
           <Footer />

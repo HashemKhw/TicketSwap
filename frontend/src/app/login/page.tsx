@@ -4,6 +4,12 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import {
+  signInWithGooglePopup,
+  getFirebaseAuth,
+  createOrUpdateUserProfile,
+} from "@/lib/firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -12,6 +18,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [err, setErr] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const [firebasePending, setFirebasePending] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -24,6 +31,36 @@ export default function LoginPage() {
       setErr(ex instanceof Error ? ex.message : "Login failed");
     } finally {
       setPending(false);
+    }
+  }
+
+  async function onFirebaseEmailLogin(e: React.FormEvent) {
+    e.preventDefault();
+    setErr(null);
+    setFirebasePending(true);
+    try {
+      const auth = getFirebaseAuth();
+      const cred = await signInWithEmailAndPassword(auth, email, password);
+      await createOrUpdateUserProfile(cred.user);
+      router.push("/dashboard");
+    } catch (ex) {
+      setErr(ex instanceof Error ? ex.message : "Firebase login failed");
+    } finally {
+      setFirebasePending(false);
+    }
+  }
+
+  async function onGoogleLogin() {
+    setErr(null);
+    setFirebasePending(true);
+    try {
+      const cred = await signInWithGooglePopup();
+      await createOrUpdateUserProfile(cred.user);
+      router.push("/dashboard");
+    } catch (ex) {
+      setErr(ex instanceof Error ? ex.message : "Google login failed");
+    } finally {
+      setFirebasePending(false);
     }
   }
 
@@ -71,9 +108,31 @@ export default function LoginPage() {
           disabled={pending}
           className="w-full rounded-lg bg-indigo-600 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-60"
         >
-          {pending ? "Signing in…" : "Sign in"}
+          {pending ? "Signing in…" : "Sign in (API auth) "}
         </button>
       </form>
+      <div className="mt-6 space-y-3 border-t border-slate-200 pt-6">
+        <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+          Or sign in with Firebase
+        </p>
+        <form onSubmit={onFirebaseEmailLogin} className="space-y-3">
+          <button
+            type="submit"
+            disabled={firebasePending}
+            className="w-full rounded-lg border border-slate-300 bg-white py-2.5 text-sm font-semibold text-slate-800 hover:bg-slate-50 disabled:opacity-60"
+          >
+            {firebasePending ? "Signing in…" : "Sign in with email (Firebase)"}
+          </button>
+        </form>
+        <button
+          type="button"
+          onClick={onGoogleLogin}
+          disabled={firebasePending}
+          className="w-full rounded-lg bg-white py-2.5 text-sm font-semibold text-slate-800 ring-1 ring-slate-300 hover:bg-slate-50 disabled:opacity-60"
+        >
+          {firebasePending ? "Connecting…" : "Continue with Google (Firebase)"}
+        </button>
+      </div>
     </div>
   );
 }
